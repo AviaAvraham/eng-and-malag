@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import json
 
 def get_latest_courses_url(html):
     soup = BeautifulSoup(html, 'html.parser')
@@ -87,15 +88,35 @@ def fetch_data():
 
     return {'courses': course_numbers, 'malagim': malagim_numbers}
 
+def read_from_file(filename='output.json'):
+    try:
+        with open(filename, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {'courses': [], 'malagim': []}
+
 def write_to_file(data, filename='output.json'):
     with open(filename, 'w', encoding='utf-8') as f:
-        import json
         json.dump(data, f, ensure_ascii=False, indent=4)
     print(f"Data written to {filename}")
 
 def main():
-    data = fetch_data()
-    write_to_file(data)
+    previous_data = read_from_file()
+    new_data = fetch_data()
+
+    if not new_data['courses']:
+        new_data['courses'] = previous_data['courses']
+        print("No new courses data found. Using previous data.")
+    else:
+        print("Updated courses data.")
+
+    if not new_data['malagim']:
+        new_data['malagim'] = previous_data['malagim']
+        print("No new malagim data found. Using previous data.")
+    else:
+        print("Updated malagim data.")
+
+    write_to_file(new_data)
 
 if __name__ == '__main__':
     main()
