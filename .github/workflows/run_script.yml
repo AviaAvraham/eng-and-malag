@@ -31,6 +31,12 @@ jobs:
       - name: Run script
         run: python app.py 
 
+      # Debug secret
+      - name: Debug secret
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "Token: ${{ secrets.PAT }}"
+
       # Commit and push changes
       - name: Commit and push changes
         run: |
