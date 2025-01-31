@@ -2,46 +2,41 @@ name: Run Script and Push Changes
 
 on:
   schedule:
-    # Run every day at midnight UTC
-    - cron: '0 0 * * *'
-  workflow_dispatch:  # Allow manual triggering
+    - cron: '0 0 * * *'  # Daily at midnight UTC
+  workflow_dispatch:
 
 jobs:
   run-script:
     runs-on: ubuntu-latest
 
     steps:
-      # Check out the repository
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Critical for git history
 
-      # Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'  # Use the Python version your script requires
+          python-version: '3.9'
 
-      # Install dependencies (if any)
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
           pip install requests beautifulsoup4
 
-      # Run the script
-      - name: Run script
-        run: python app.py 
+      - name: Run script (app.py)
+        run: python app.py
 
-      # Debug secret
-      - name: Debug secret
+      - name: Debug modified files
         run: |
-          echo "Repository: ${{ github.repository }}"
-          echo "Token: ${{ secrets.PAT }}"
+          git status
+          ls -la  # List files to confirm changes
 
-      # Commit and push changes
       - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m "Automated update: Fetch latest courses and malagim data"
-          git push https://${{ secrets.PAT }}@github.com/${{ github.repository }}.git
+          git commit -m "Automated update: Fetch latest data"
+          # Force push if branch protections are disabled temporarily
+          git push https://${{ secrets.PAT }}@github.com/${{ github.repository }}.git HEAD:main
