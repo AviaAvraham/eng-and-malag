@@ -39,6 +39,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m "Automated update: Fetch latest data"
+          git commit -m "Automated update: Fetch latest data" --allow-empty
           # Force push if branch protections are disabled temporarily
           git push
