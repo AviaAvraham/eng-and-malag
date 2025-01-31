@@ -41,4 +41,4 @@ jobs:
           git add .
           git commit -m "Automated update: Fetch latest data"
           # Force push if branch protections are disabled temporarily
-          git push https://${{ secrets.PAT }}@github.com/${{ github.repository }}.git HEAD:main
+          git push
